@@ -1,6 +1,7 @@
 // Firebase custom token = RS256 JWT
 // firebase-admin 없이 jsonwebtoken으로 직접 생성
-const jwt = require('jsonwebtoken');
+const jwt            = require('jsonwebtoken');
+const { createPrivateKey } = require('crypto');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -36,9 +37,10 @@ module.exports = async function handler(req, res) {
   // ④ Firebase custom token 생성 (RS256 JWT)
   // Firebase가 기대하는 형식: https://firebase.google.com/docs/auth/admin/create-custom-tokens
   try {
-    const uid          = `naver:${naverUser.id}`;
-    const now          = Math.floor(Date.now() / 1000);
-    const privateKey   = FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+    const uid        = `naver:${naverUser.id}`;
+    const now        = Math.floor(Date.now() / 1000);
+    const pemString  = FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/^"|"$/g, '');
+    const privateKey = createPrivateKey({ key: pemString, format: 'pem' });
 
     const payload = {
       iss:    FIREBASE_CLIENT_EMAIL,
