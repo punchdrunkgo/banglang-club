@@ -438,7 +438,7 @@ function listenRooms() {
       const dot = r.userUnread ? '<div class="unread-dot"></div>' : '';
       const time = r.lastMessageAt ? timeAgo(r.lastMessageAt.toDate()) : '';
       const preview = r.lastMessage || '대화를 시작해보세요';
-      return `<div class="room-item${isActive}" onclick="openRoom('${d.id}','${escHtml(r.title||'여행 질문')}')">
+      return `<div class="room-item${isActive}" data-room-id="${d.id}" onclick="openRoom('${d.id}','${escHtml(r.title||'여행 질문')}')">
         <div class="room-row">
           <div class="room-name">${escHtml(r.title || '여행 질문')}</div>
           ${dot}
@@ -455,7 +455,7 @@ window.openRoom = function(roomId, title) {
   currentRoomId = roomId;
   // 사이드바 active 표시
   document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
-  event.currentTarget?.classList.add('active');
+  document.querySelector(`.room-item[data-room-id="${roomId}"]`)?.classList.add('active');
 
   const main = document.getElementById('chat-main');
   main.innerHTML = `
