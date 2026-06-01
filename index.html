@@ -423,8 +423,7 @@ function listenRooms() {
   if (unsubRooms) unsubRooms();
   const q = query(
     collection(db, 'chatRooms'),
-    where('userId', '==', currentUser.uid),
-    orderBy('lastMessageAt', 'desc')
+    where('userId', '==', currentUser.uid)
   );
   unsubRooms = onSnapshot(q, snap => {
     const list = document.getElementById('room-list');
@@ -432,7 +431,13 @@ function listenRooms() {
       list.innerHTML = '<div class="room-empty">질문이 없어요.<br>+ 버튼으로 시작해보세요.</div>';
       return;
     }
-    list.innerHTML = snap.docs.map(d => {
+    // 최신 메시지 순 클라이언트 정렬 (복합 인덱스 불필요)
+    const sorted = [...snap.docs].sort((a, b) => {
+      const ta = a.data().lastMessageAt?.toMillis?.() || 0;
+      const tb = b.data().lastMessageAt?.toMillis?.() || 0;
+      return tb - ta;
+    });
+    list.innerHTML = sorted.map(d => {
       const r = d.data();
       const isActive = d.id === currentRoomId ? ' active' : '';
       const dot = r.userUnread ? '<div class="unread-dot"></div>' : '';
