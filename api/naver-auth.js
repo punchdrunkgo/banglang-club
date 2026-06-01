@@ -1,5 +1,24 @@
-// Node.js 내장 crypto로 Firebase custom token 생성 (외부 패키지 불필요)
 const crypto = require('crypto');
+
+// Vercel 환경변수에서 PEM 키를 어떤 형식으로 저장해도 올바르게 변환
+function fixPem(raw) {
+  // 1) 앞뒤 따옴표 제거
+  let pem = raw.replace(/^["']|["']$/g, '').trim();
+
+  // 2) 리터럴 \n → 실제 줄바꿈
+  pem = pem.replace(/\\n/g, '\n');
+
+  // 3) 줄바꿈이 없으면 base64 부분을 64자 단위로 재포맷
+  if (!pem.includes('\n')) {
+    const m = pem.match(/-----BEGIN[^-]+-----([A-Za-z0-9+/=\s]+)-----END[^-]+-----/);
+    if (m) {
+      const b64 = m[1].replace(/\s/g, '');
+      const chunks = b64.match(/.{1,64}/g).join('\n');
+      pem = `-----BEGIN PRIVATE KEY-----\n${chunks}\n-----END PRIVATE KEY-----\n`;
+    }
+  }
+  return pem;
+}
 
 function b64url(obj) {
   const str = typeof obj === 'string' ? obj : JSON.stringify(obj);
@@ -62,7 +81,7 @@ module.exports = async function handler(req, res) {
   // ④ Firebase custom token 생성
   try {
     const uid        = `naver:${naverUser.id}`;
-    const pemString  = FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/^"|"$/g, '').trim();
+    const pemString  = fixPem(FIREBASE_PRIVATE_KEY);
     const customToken = makeFirebaseToken(uid, FIREBASE_CLIENT_EMAIL, pemString);
 
     return res.json({
