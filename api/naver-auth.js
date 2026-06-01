@@ -1,24 +1,27 @@
-// Vercel 서버리스 함수
-// 역할: Naver access_token → Naver 사용자 정보 조회 → Firebase custom token 발급
-// 환경변수 필요: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
+// Vercel 서버리스 함수 (CommonJS)
+// Naver access_token → Naver 프로필 조회 → Firebase custom token 발급
 
-import admin from 'firebase-admin';
+const admin = require('firebase-admin');
 
-// Firebase Admin 초기화 (cold start 시 한 번만)
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId:   process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey:  process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-  });
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId:   process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey:  (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+      }),
+    });
+  } catch (e) {
+    console.error('Firebase Admin 초기화 실패:', e.message);
+  }
 }
 
-export default async function handler(req, res) {
-  // CORS 허용
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Content-Type', 'application/json');
+
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const { token } = req.query;
@@ -33,21 +36,22 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await naverRes.json();
-    if (!data.response) throw new Error(data.message || 'Naver API 오류');
+    console.log('Naver API 응답:', JSON.stringify(data));
+    if (!data.response) throw new Error(data.message || 'Naver 사용자 정보 없음');
     naverUser = data.response;
   } catch (e) {
-    return res.status(401).json({ error: '유효하지 않은 네이버 토큰: ' + e.message });
+    console.error('Naver API 오류:', e.message);
+    return res.status(401).json({ error: 'Naver 인증 실패: ' + e.message });
   }
 
   // ② Firebase custom token 발급
-  // uid: "naver:{naverId}" 형식으로 Google 계정과 구분
   const uid = `naver:${naverUser.id}`;
   try {
     const customToken = await admin.auth().createCustomToken(uid, {
-      provider:  'naver',
-      name:      naverUser.name || '',
-      email:     naverUser.email || '',
-      photoURL:  naverUser.profile_image || '',
+      provider: 'naver',
+      name:     naverUser.name     || '',
+      email:    naverUser.email    || '',
+      photoURL: naverUser.profile_image || '',
     });
     return res.json({
       customToken,
@@ -59,6 +63,7 @@ export default async function handler(req, res) {
       },
     });
   } catch (e) {
-    return res.status(500).json({ error: 'Firebase custom token 생성 실패: ' + e.message });
+    console.error('Firebase custom token 오류:', e.message);
+    return res.status(500).json({ error: 'Firebase 토큰 생성 실패: ' + e.message });
   }
-}
+};
