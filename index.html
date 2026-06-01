@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>방랑클럽 — 여행 고민, 같이 얘기해요</title>
+<meta name="description" content="여행 고민을 전문가와 실시간으로 해결하세요.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#0071e3;--blue2:#0077ed;
+  --dark:#1d1d1f;--light:#f5f5f7;--gray:#6e6e73;
+  --nav-h:48px;
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;background:#000;color:#f5f5f7;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:999;height:var(--nav-h);
+  background:rgba(0,0,0,.8);backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:.5px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  transition:background .3s;
+}
+.nav-logo{font-size:17px;font-weight:700;letter-spacing:-.3px;color:#f5f5f7;text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-link{font-size:13px;color:rgba(245,245,247,.75);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .15s}
+.nav-link:hover{color:#f5f5f7}
+.nav-cta{font-size:13px;font-weight:600;background:var(--blue);color:#fff;padding:7px 16px;border-radius:980px;border:none;cursor:pointer;font-family:inherit;transition:background .15s}
+.nav-cta:hover{background:var(--blue2)}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:calc(var(--nav-h) + 40px) 24px 80px;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,80,200,.55) 0%,transparent 70%),
+             radial-gradient(ellipse 60% 40% at 80% 80%,rgba(100,20,180,.2) 0%,transparent 60%),#000;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 20%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 80% 55%,rgba(255,255,255,.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 35% 75%,rgba(255,255,255,.25) 0%,transparent 100%);
+}
+.hero-eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;color:rgba(100,160,255,.9);text-transform:uppercase;margin-bottom:24px;animation:fadeUp .8s ease both}
+.hero-title{font-size:clamp(56px,9vw,112px);font-weight:700;letter-spacing:-3px;line-height:1.02;margin-bottom:24px;background:linear-gradient(180deg,#fff 50%,rgba(255,255,255,.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp .8s .1s ease both}
+.hero-sub{font-size:clamp(17px,2.5vw,26px);color:rgba(245,245,247,.65);font-weight:400;line-height:1.55;margin-bottom:52px;max-width:560px;animation:fadeUp .8s .2s ease both}
+.hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;animation:fadeUp .8s .32s ease both}
+.btn-primary{background:var(--blue);color:#fff;font-size:17px;font-weight:600;letter-spacing:-.2px;padding:15px 40px;border-radius:980px;border:none;cursor:pointer;font-family:inherit;transition:background .2s,transform .15s,box-shadow .2s}
+.btn-primary:hover{background:var(--blue2);transform:scale(1.025);box-shadow:0 8px 32px rgba(0,113,227,.35)}
+.btn-primary:active{transform:scale(.97)}
+.btn-ghost{background:none;color:rgba(245,245,247,.8);font-size:17px;padding:15px 20px;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:color .15s}
+.btn-ghost:hover{color:#f5f5f7}
+.btn-ghost svg{transition:transform .2s}
+.btn-ghost:hover svg{transform:translateX(3px)}
+.hero-scroll{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;animation:fadeUp .8s .7s ease both}
+.scroll-line{width:1px;height:32px;background:linear-gradient(to bottom,rgba(255,255,255,.4),transparent);animation:scrollLine 2s ease infinite}
+.scroll-text{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.08em}
+
+/* ── FEATURES ── */
+.features{background:#000;padding:100px 24px 120px;display:flex;flex-direction:column;align-items:center}
+.features-label{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.features-title{font-size:clamp(32px,5vw,56px);font-weight:700;letter-spacing:-1.5px;text-align:center;margin-bottom:80px;line-height:1.1;max-width:720px}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-width:1000px;width:100%}
+.feature-card{background:#111;padding:44px 36px;transition:background .2s}
+.feature-card:first-child{border-radius:20px 0 0 20px}
+.feature-card:last-child{border-radius:0 20px 20px 0}
+.feature-card:hover{background:#161616}
+.feature-icon{font-size:40px;margin-bottom:24px;display:block}
+.feature-card h3{font-size:20px;font-weight:700;letter-spacing:-.4px;color:#f5f5f7;margin-bottom:12px}
+.feature-card p{font-size:15px;color:rgba(245,245,247,.55);line-height:1.7}
+
+/* ── HOW ── */
+.how{background:#0a0a0a;padding:100px 24px 120px;text-align:center}
+.how-inner{max-width:800px;margin:0 auto}
+.how-label{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:20px}
+.how-title{font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-1px;margin-bottom:64px;line-height:1.1}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;text-align:left}
+.step-num{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--blue);margin-bottom:14px}
+.step h4{font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:10px}
+.step p{font-size:14px;color:rgba(245,245,247,.5);line-height:1.75}
+
+/* ── CTA ── */
+.cta-section{background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(0,80,200,.3) 0%,transparent 70%),#000;padding:120px 24px;text-align:center;border-top:.5px solid rgba(255,255,255,.06)}
+.cta-section h2{font-size:clamp(32px,5vw,64px);font-weight:700;letter-spacing:-2px;margin-bottom:20px;line-height:1.05}
+.cta-section p{font-size:19px;color:rgba(245,245,247,.6);margin-bottom:48px}
+footer{border-top:.5px solid rgba(255,255,255,.08);padding:32px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-logo{font-size:15px;font-weight:600;color:rgba(245,245,247,.5)}
+.footer-copy{font-size:12px;color:rgba(245,245,247,.3)}
+
+/* ── LOGIN MODAL ── */
+.overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#1c1c1e;border:.5px solid rgba(255,255,255,.12);border-radius:22px;padding:44px 40px;width:380px;max-width:90vw;text-align:center;position:relative;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1) both}
+.modal-close{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .15s}
+.modal-close:hover{background:rgba(255,255,255,.14)}
+.modal-emoji{font-size:44px;margin-bottom:16px}
+.modal h2{font-size:22px;font-weight:700;letter-spacing:-.4px;margin-bottom:8px}
+.modal-sub{font-size:14px;color:rgba(245,245,247,.5);line-height:1.65;margin-bottom:32px}
+.login-btn{width:100%;padding:14px 20px;border-radius:13px;border:none;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .15s,transform .12s;margin-bottom:10px}
+.login-btn:hover{opacity:.88}
+.login-btn:active{transform:scale(.98)}
+.login-btn-google{background:#fff;color:#1d1d1f}
+.login-btn-naver{background:#03C75A;color:#fff}
+.divider{display:flex;align-items:center;gap:12px;margin:6px 0;font-size:12px;color:rgba(245,245,247,.25)}
+.divider::before,.divider::after{content:'';flex:1;height:.5px;background:rgba(255,255,255,.1)}
+
+/* ── CHAT VIEW ── */
+#chat-view{display:none;min-height:100vh;background:#f5f5f7;flex-direction:column}
+#chat-view.active{display:flex}
+.chat-nav{
+  position:sticky;top:0;z-index:100;height:var(--nav-h);
+  background:rgba(248,248,252,.9);backdrop-filter:saturate(200%) blur(40px);
+  -webkit-backdrop-filter:saturate(200%) blur(40px);
+  border-bottom:.5px solid rgba(0,0,0,.08);
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+}
+.chat-nav-logo{font-size:17px;font-weight:700;color:#1d1d1f;text-decoration:none;display:flex;align-items:center;gap:8px}
+.chat-nav-right{display:flex;align-items:center;gap:12px}
+.user-chip{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:980px;background:rgba(0,0,0,.05);cursor:pointer;transition:background .15s}
+.user-chip:hover{background:rgba(0,0,0,.09)}
+.user-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;flex-shrink:0}
+.user-name{font-size:13px;font-weight:500;color:#1d1d1f;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.signout-btn{font-size:13px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:inherit}
+
+.chat-layout{flex:1;display:flex;max-width:1020px;width:100%;margin:0 auto;padding:20px 20px 24px;gap:16px;min-height:0}
+
+/* Sidebar */
+.sidebar{
+  width:280px;flex-shrink:0;background:#fff;
+  border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sidebar-head{
+  padding:16px 20px;border-bottom:.5px solid rgba(0,0,0,.06);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.sidebar-title{font-size:15px;font-weight:700;color:#1d1d1f}
+.new-btn{
+  width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;
+  border:none;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  line-height:1;transition:background .15s,transform .1s;
+}
+.new-btn:hover{background:var(--blue2)}
+.new-btn:active{transform:scale(.92)}
+.room-list{flex:1;overflow-y:auto;padding:6px 0}
+.room-item{
+  padding:12px 20px;cursor:pointer;transition:background .1s;
+  border-left:3px solid transparent;
+}
+.room-item:hover{background:rgba(0,0,0,.03)}
+.room-item.active{background:rgba(0,113,227,.06);border-left-color:var(--blue)}
+.room-row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px}
+.room-name{font-size:14px;font-weight:600;color:#1d1d1f;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room-preview{font-size:12px;color:#6e6e73;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room-date{font-size:10px;color:#aeaeb2;flex-shrink:0}
+.unread-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.room-empty{padding:40px 20px;text-align:center;color:#aeaeb2;font-size:13px;line-height:1.75}
+
+/* Main */
+.chat-main{
+  flex:1;background:#fff;border-radius:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  display:flex;flex-direction:column;overflow:hidden;min-height:560px;
+}
+.chat-main-head{
+  padding:16px 24px;border-bottom:.5px solid rgba(0,0,0,.06);
+  flex-shrink:0;display:flex;align-items:center;gap:10px;
+}
+.chat-main-title{font-size:15px;font-weight:600;color:#1d1d1f}
+.chat-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:980px;background:rgba(52,199,89,.12);color:#248a3d}
+.chat-badge.waiting{background:rgba(255,159,10,.12);color:#c07800}
+.chat-messages{
+  flex:1;overflow-y:auto;padding:20px 24px;
+  display:flex;flex-direction:column;gap:12px;
+  background:#f5f5f7;
+}
+.msg-wrap{display:flex;flex-direction:column}
+.msg-wrap.mine{align-items:flex-end}
+.msg-wrap.theirs{align-items:flex-start}
+.msg-row{display:flex;align-items:flex-end;gap:8px;max-width:72%}
+.msg-wrap.mine .msg-row{flex-direction:row-reverse}
+.msg-avatar-img{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700}
+.bubble{padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.55;word-break:break-word}
+.msg-wrap.mine .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.msg-wrap.theirs .bubble{background:#fff;color:#1d1d1f;border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.msg-time{font-size:10px;color:#aeaeb2;margin-top:4px;padding:0 4px}
+
+/* 타이핑 인디케이터 */
+.typing-indicator{display:none;align-items:center;gap:4px;padding:10px 14px;background:#fff;border-radius:18px;border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.08);width:fit-content}
+.typing-indicator.show{display:flex}
+.typing-indicator span{width:6px;height:6px;border-radius:50%;background:#aeaeb2;animation:typingDot 1.2s ease infinite}
+.typing-indicator span:nth-child(2){animation-delay:.2s}
+.typing-indicator span:nth-child(3){animation-delay:.4s}
+
+/* 빈 채팅방 */
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#f5f5f7;padding:40px;text-align:center}
+.chat-empty-icon{font-size:52px}
+.chat-empty-title{font-size:17px;font-weight:600;color:#6e6e73}
+.chat-empty-sub{font-size:14px;color:#aeaeb2;line-height:1.65;max-width:300px}
+.start-btn{margin-top:8px;background:var(--blue);color:#fff;font-size:14px;font-weight:600;padding:10px 24px;border-radius:980px;border:none;cursor:pointer;font-family:inherit;transition:background .15s}
+.start-btn:hover{background:var(--blue2)}
+
+/* 입력창 */
+.chat-input-wrap{padding:14px 20px;background:#fff;border-top:.5px solid rgba(0,0,0,.06);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.chat-input{flex:1;border:1.5px solid rgba(0,0,0,.1);border-radius:20px;padding:10px 16px;font-size:15px;font-family:inherit;resize:none;outline:none;max-height:120px;line-height:1.5;background:#f5f5f7;color:#1d1d1f;transition:border-color .15s,background .15s}
+.chat-input:focus{border-color:var(--blue);background:#fff}
+.send-btn{width:36px;height:36px;border-radius:50%;background:var(--blue);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s,transform .1s}
+.send-btn:hover{background:var(--blue2)}
+.send-btn:active{transform:scale(.9)}
+.send-btn:disabled{background:#aeaeb2;cursor:default}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes scrollLine{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes typingDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .sidebar{display:none}
+  .chat-layout{padding:12px 0 0;gap:0}
+  .chat-main{border-radius:0;min-height:calc(100vh - 48px)}
+  .feature-grid{grid-template-columns:1fr;gap:2px}
+  .feature-card:first-child{border-radius:20px 20px 0 0}
+  .feature-card:last-child{border-radius:0 0 20px 20px}
+  .steps{grid-template-columns:1fr;gap:36px}
+  footer{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ LANDING ════ -->
+<div id="landing-view">
+  <nav id="main-nav">
+    <a class="nav-logo" href="/">🧭 방랑클럽</a>
+    <div class="nav-right">
+      <button class="nav-link" onclick="openModal()">로그인</button>
+      <button class="nav-cta" onclick="openModal()">질문하기</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-eyebrow">여행 전문가와 실시간 상담</div>
+    <h1 class="hero-title">방랑클럽</h1>
+    <p class="hero-sub">여행 고민, 같이 얘기해요</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openModal()">질문하기</button>
+      <button class="btn-ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+        어떤 서비스인가요
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="hero-scroll"><div class="scroll-line"></div><div class="scroll-text">SCROLL</div></div>
+  </section>
+
+  <section id="features" class="features">
+    <div class="features-label">Why Banglang</div>
+    <h2 class="features-title">혼자 고민하지 마세요</h2>
+    <div class="feature-grid">
+      <div class="feature-card"><span class="feature-icon">✈️</span><h3>모든 여행 고민</h3><p>일정 짜기, 숙소 선택, 현지 팁까지.<br>어떤 질문이든 환영합니다.</p></div>
+      <div class="feature-card"><span class="feature-icon">💬</span><h3>실시간 1:1 채팅</h3><p>전문가가 직접 답변합니다.<br>답변이 오면 이메일로 알려드려요.</p></div>
+      <div class="feature-card"><span class="feature-icon">🔒</span><h3>안전한 대화</h3><p>Google 계정으로 로그인하면<br>대화 내용이 안전하게 보관됩니다.</p></div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="how-inner">
+      <div class="how-label">How it works</div>
+      <h2 class="how-title">세 단계면 충분해요</h2>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><h4>로그인</h4><p>Google 계정으로 빠르게 시작하세요. 별도 가입이 필요 없어요.</p></div>
+        <div class="step"><div class="step-num">02</div><h4>질문 입력</h4><p>자유롭게 여행 고민을 적어보세요. 어떤 형식이든 괜찮아요.</p></div>
+        <div class="step"><div class="step-num">03</div><h4>답변 받기</h4><p>전문가가 확인 후 답변을 드립니다. 이메일로 도착을 알려드려요.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2>여행을 더 잘 떠나고 싶다면</h2>
+    <p>지금 바로 질문해보세요. 무료입니다.</p>
+    <button class="btn-primary" onclick="openModal()">질문하기 →</button>
+  </section>
+
+  <footer>
+    <div class="footer-logo">🧭 방랑클럽</div>
+    <div class="footer-copy">© 2026 Banglang Club</div>
+  </footer>
+</div>
+
+<!-- ════ CHAT VIEW ════ -->
+<div id="chat-view">
+  <nav class="chat-nav">
+    <a class="chat-nav-logo" href="/">🧭 방랑클럽</a>
+    <div class="chat-nav-right">
+      <div class="user-chip" id="user-chip">
+        <div class="user-avatar" id="nav-avatar"></div>
+        <span class="user-name" id="nav-name"></span>
+      </div>
+      <button class="signout-btn" onclick="doSignOut()">로그아웃</button>
+    </div>
+  </nav>
+
+  <div class="chat-layout">
+    <!-- 사이드바 -->
+    <div class="sidebar">
+      <div class="sidebar-head">
+        <span class="sidebar-title">내 질문들</span>
+        <button class="new-btn" onclick="createRoom()" title="새 질문">+</button>
+      </div>
+      <div class="room-list" id="room-list">
+        <div class="room-empty">질문이 없어요.<br>+ 버튼으로 시작해보세요.</div>
+      </div>
+    </div>
+
+    <!-- 채팅 메인 -->
+    <div class="chat-main" id="chat-main">
+      <div class="chat-empty" id="chat-empty">
+        <div class="chat-empty-icon">🧭</div>
+        <div class="chat-empty-title">여행 고민이 있으신가요?</div>
+        <div class="chat-empty-sub">새 질문을 시작하면 전문가가 직접 답변해드려요.</div>
+        <button class="start-btn" onclick="createRoom()">첫 질문 시작하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ LOGIN MODAL ════ -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-emoji">🧭</div>
+    <h2>방랑클럽 시작하기</h2>
+    <p class="modal-sub">로그인하면 여행 전문가에게<br>바로 질문할 수 있어요.</p>
+    <button class="login-btn login-btn-google" onclick="loginGoogle()">
+      <svg viewBox="0 0 18 18" width="18" height="18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+      Google로 계속하기
+    </button>
+    <div class="divider">또는</div>
+    <button class="login-btn login-btn-naver" onclick="loginNaver()">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z"/></svg>
+      네이버로 계속하기
+    </button>
+  </div>
+</div>
+
+<!-- Firebase SDK (Packo와 동일 프로젝트 공유) -->
+<script type="module">
+import { initializeApp }               from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
+                                        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, collection, addDoc, query, where, orderBy,
+         onSnapshot, doc, updateDoc, serverTimestamp, getDocs }
+                                        from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+/* ── Firebase 초기화 (Packo와 동일 프로젝트) ── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyAi8GH9BFKRi4AZwAaCQhcEh6Fbb--69SA",
+  authDomain:        "pack-all-c1794.firebaseapp.com",
+  projectId:         "pack-all-c1794",
+  storageBucket:     "pack-all-c1794.firebasestorage.app",
+  messagingSenderId: "1033545847188",
+  appId:             "1:1033545847188:web:91367da0e81c2132e2bf81"
+};
+
+const app  = initializeApp(firebaseConfig, 'banglang'); // 앱 이름 분리
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const ADMIN_EMAIL = 'a912243@gmail.com';
+
+/* ── 상태 ── */
+let currentUser      = null;
+let currentRoomId    = null;
+let unsubRooms       = null;
+let unsubMessages    = null;
+
+/* ── Auth 상태 감지 ── */
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (user) {
+    closeModal();
+    showChatView(user);
+    listenRooms();
+  } else {
+    showLanding();
+  }
+});
+
+/* ── 뷰 전환 ── */
+function showChatView(user) {
+  document.getElementById('landing-view').style.display = 'none';
+  document.getElementById('chat-view').classList.add('active');
+
+  // 네브 유저 정보
+  const avatar = document.getElementById('nav-avatar');
+  if (user.photoURL) {
+    avatar.innerHTML = `<img src="${user.photoURL}" style="width:26px;height:26px;border-radius:50%;object-fit:cover">`;
+  } else {
+    avatar.textContent = (user.displayName || 'U')[0].toUpperCase();
+    avatar.style.background = 'var(--blue)';
+  }
+  document.getElementById('nav-name').textContent = user.displayName || user.email;
+}
+
+function showLanding() {
+  document.getElementById('landing-view').style.display = 'block';
+  document.getElementById('chat-view').classList.remove('active');
+  if (unsubRooms) { unsubRooms(); unsubRooms = null; }
+  if (unsubMessages) { unsubMessages(); unsubMessages = null; }
+}
+
+/* ── 채팅방 목록 실시간 감지 ── */
+function listenRooms() {
+  if (unsubRooms) unsubRooms();
+  const q = query(
+    collection(db, 'chatRooms'),
+    where('userId', '==', currentUser.uid),
+    orderBy('lastMessageAt', 'desc')
+  );
+  unsubRooms = onSnapshot(q, snap => {
+    const list = document.getElementById('room-list');
+    if (snap.empty) {
+      list.innerHTML = '<div class="room-empty">질문이 없어요.<br>+ 버튼으로 시작해보세요.</div>';
+      return;
+    }
+    list.innerHTML = snap.docs.map(d => {
+      const r = d.data();
+      const isActive = d.id === currentRoomId ? ' active' : '';
+      const dot = r.userUnread ? '<div class="unread-dot"></div>' : '';
+      const time = r.lastMessageAt ? timeAgo(r.lastMessageAt.toDate()) : '';
+      const preview = r.lastMessage || '대화를 시작해보세요';
+      return `<div class="room-item${isActive}" onclick="openRoom('${d.id}','${escHtml(r.title||'여행 질문')}')">
+        <div class="room-row">
+          <div class="room-name">${escHtml(r.title || '여행 질문')}</div>
+          ${dot}
+          <div class="room-date">${time}</div>
+        </div>
+        <div class="room-preview">${escHtml(preview)}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+/* ── 채팅방 열기 ── */
+window.openRoom = function(roomId, title) {
+  currentRoomId = roomId;
+  // 사이드바 active 표시
+  document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget?.classList.add('active');
+
+  const main = document.getElementById('chat-main');
+  main.innerHTML = `
+    <div class="chat-main-head">
+      <div class="chat-main-title">${escHtml(title)}</div>
+      <div class="chat-badge waiting" id="room-badge">답변 대기중</div>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input-wrap">
+      <textarea class="chat-input" id="chat-input" rows="1" placeholder="여행 고민을 자유롭게 적어보세요…"
+        oninput="autoResize(this)" onkeydown="inputKeydown(event)"></textarea>
+      <button class="send-btn" onclick="sendMessage()" id="send-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l3 6-3 6 12-6z" fill="white"/></svg>
+      </button>
+    </div>`;
+
+  listenMessages(roomId);
+  // unread 초기화
+  updateDoc(doc(db, 'chatRooms', roomId), { userUnread: false }).catch(()=>{});
+};
+
+/* ── 메시지 실시간 감지 ── */
+function listenMessages(roomId) {
+  if (unsubMessages) unsubMessages();
+  const q = query(collection(db, 'chatRooms', roomId, 'messages'), orderBy('createdAt', 'asc'));
+  unsubMessages = onSnapshot(q, snap => {
+    const box = document.getElementById('chat-messages');
+    if (!box) return;
+
+    // 배지 업데이트
+    const hasAdminMsg = snap.docs.some(d => d.data().senderType === 'admin');
+    const badge = document.getElementById('room-badge');
+    if (badge) {
+      badge.textContent   = hasAdminMsg ? '답변 완료' : '답변 대기중';
+      badge.className     = 'chat-badge' + (hasAdminMsg ? '' : ' waiting');
+    }
+
+    box.innerHTML = snap.docs.map(d => {
+      const m   = d.data();
+      const mine = m.senderId === currentUser.uid;
+      const side = mine ? 'mine' : 'theirs';
+      const time = m.createdAt ? formatTime(m.createdAt.toDate()) : '';
+      const avatarHtml = mine
+        ? (currentUser.photoURL
+            ? `<img class="msg-avatar-img" src="${currentUser.photoURL}" alt="">`
+            : `<div class="msg-avatar-img">${(currentUser.displayName||'U')[0]}</div>`)
+        : `<div class="msg-avatar-img" style="background:#1d1d1f">🧭</div>`;
+      return `<div class="msg-wrap ${side}">
+        <div class="msg-row">
+          ${avatarHtml}
+          <div class="bubble">${escHtml(m.text)}</div>
+        </div>
+        <div class="msg-time">${time}</div>
+      </div>`;
+    }).join('');
+
+    box.scrollTop = box.scrollHeight;
+  });
+}
+
+/* ── 새 채팅방 생성 ── */
+window.createRoom = async function() {
+  if (!currentUser) { openModal(); return; }
+  const roomRef = await addDoc(collection(db, 'chatRooms'), {
+    userId:        currentUser.uid,
+    userEmail:     currentUser.email,
+    userName:      currentUser.displayName || '',
+    userPhotoURL:  currentUser.photoURL || '',
+    title:         '여행 질문',
+    lastMessage:   '',
+    lastMessageAt: serverTimestamp(),
+    createdAt:     serverTimestamp(),
+    answered:      false,
+    userUnread:    false,
+  });
+  openRoom(roomRef.id, '여행 질문');
+};
+
+/* ── 메시지 전송 ── */
+window.sendMessage = async function() {
+  const input = document.getElementById('chat-input');
+  const text  = (input?.value || '').trim();
+  if (!text || !currentRoomId || !currentUser) return;
+
+  input.value = '';
+  input.style.height = '';
+  document.getElementById('send-btn').disabled = true;
+
+  const msgData = {
+    text,
+    senderId:    currentUser.uid,
+    senderType:  'user',
+    senderName:  currentUser.displayName || '',
+    senderPhoto: currentUser.photoURL || '',
+    createdAt:   serverTimestamp(),
+  };
+
+  await addDoc(collection(db, 'chatRooms', currentRoomId, 'messages'), msgData);
+
+  // 방 제목: 첫 메시지를 제목으로
+  const roomSnap = await getDocs(query(
+    collection(db, 'chatRooms', currentRoomId, 'messages'), orderBy('createdAt', 'asc')
+  ));
+  const title = text.slice(0, 30) + (text.length > 30 ? '…' : '');
+  await updateDoc(doc(db, 'chatRooms', currentRoomId), {
+    lastMessage:   text,
+    lastMessageAt: serverTimestamp(),
+    title:         roomSnap.size <= 1 ? title : undefined,
+    answered:      false,
+  });
+  document.getElementById('send-btn').disabled = false;
+};
+
+/* ── 로그아웃 ── */
+window.doSignOut = () => signOut(auth);
+
+/* ── Google 로그인 ── */
+window.loginGoogle = async () => {
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') alert('로그인 오류: ' + e.message);
+  }
+};
+
+/* ── 유틸 ── */
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatTime(d) {
+  return d.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
+}
+function timeAgo(d) {
+  const diff = (Date.now() - d) / 1000;
+  if (diff < 60)   return '방금';
+  if (diff < 3600) return Math.floor(diff/60) + '분 전';
+  if (diff < 86400)return Math.floor(diff/3600) + '시간 전';
+  return Math.floor(diff/86400) + '일 전';
+}
+
+window.autoResize = function(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+};
+window.inputKeydown = function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+};
+</script>
+
+<script>
+/* ── 모달 / 네브 제어 (non-module) ── */
+function openModal() {
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function overlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+window.openModal  = openModal;
+window.closeModal = closeModal;
+window.overlayClick = overlayClick;
+
+// 네이버 OAuth (Client ID 등록 후 활성화)
+window.loginNaver = function() {
+  const CLIENT_ID    = 'YOUR_NAVER_CLIENT_ID'; // TODO: developers.naver.com 등록
+  const REDIRECT_URI = encodeURIComponent(window.location.origin);
+  const state        = Math.random().toString(36).slice(2);
+  sessionStorage.setItem('naver_state', state);
+  window.location.href =
+    `https://nid.naver.com/oauth2.0/authorize?response_type=token&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&state=${state}`;
+};
+
+// 스크롤 시 Nav 변화
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('main-nav');
+  if (!nav) return;
+  nav.style.background = window.scrollY > 40 ? 'rgba(0,0,0,.95)' : 'rgba(0,0,0,.8)';
+}, {passive:true});
+
+// 스크롤 인터섹션 애니메이션
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.animation = 'fadeUp .65s ease both';
+      e.target.style.opacity   = '1';
+      observer.unobserve(e.target);
+    }
+  });
+}, {threshold:.12});
+document.querySelectorAll('.feature-card, .step').forEach(el => {
+  el.style.opacity = '0';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>
