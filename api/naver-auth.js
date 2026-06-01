@@ -1,7 +1,32 @@
-// Firebase custom token = RS256 JWT
-// firebase-admin 없이 jsonwebtoken으로 직접 생성
-const jwt            = require('jsonwebtoken');
-const { createPrivateKey } = require('crypto');
+// Node.js 내장 crypto로 Firebase custom token 생성 (외부 패키지 불필요)
+const crypto = require('crypto');
+
+function b64url(obj) {
+  const str = typeof obj === 'string' ? obj : JSON.stringify(obj);
+  return Buffer.from(str).toString('base64')
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+function makeFirebaseToken(uid, clientEmail, privateKeyPem) {
+  const now     = Math.floor(Date.now() / 1000);
+  const header  = b64url({ alg: 'RS256', typ: 'JWT' });
+  const payload = b64url({
+    iss: clientEmail,
+    sub: clientEmail,
+    aud: 'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit',
+    iat: now,
+    exp: now + 3600,
+    uid,
+    claims: { provider: 'naver' },
+  });
+
+  const signer = crypto.createSign('RSA-SHA256');
+  signer.update(`${header}.${payload}`);
+  const sig = signer.sign(privateKeyPem, 'base64')
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+
+  return `${header}.${payload}.${sig}`;
+}
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -34,32 +59,18 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Naver 인증 실패: ' + e.message });
   }
 
-  // ④ Firebase custom token 생성 (RS256 JWT)
-  // Firebase가 기대하는 형식: https://firebase.google.com/docs/auth/admin/create-custom-tokens
+  // ④ Firebase custom token 생성
   try {
     const uid        = `naver:${naverUser.id}`;
-    const now        = Math.floor(Date.now() / 1000);
-    const pemString  = FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/^"|"$/g, '');
-    const privateKey = createPrivateKey({ key: pemString, format: 'pem' });
-
-    const payload = {
-      iss:    FIREBASE_CLIENT_EMAIL,
-      sub:    FIREBASE_CLIENT_EMAIL,
-      aud:    'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit',
-      iat:    now,
-      exp:    now + 3600,
-      uid,
-      claims: { provider: 'naver', name: naverUser.name || '', email: naverUser.email || '' },
-    };
-
-    const customToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+    const pemString  = FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/^"|"$/g, '').trim();
+    const customToken = makeFirebaseToken(uid, FIREBASE_CLIENT_EMAIL, pemString);
 
     return res.json({
       customToken,
       user: {
         uid,
-        name:     naverUser.name     || '',
-        email:    naverUser.email    || '',
+        name:     naverUser.name          || '',
+        email:    naverUser.email         || '',
         photoURL: naverUser.profile_image || '',
       },
     });
