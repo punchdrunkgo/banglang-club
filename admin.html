@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>방랑클럽 어드민</title>
-<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -20,7 +19,7 @@ body{font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;backgro
 /* NAV */
 nav{height:var(--nav-h);background:rgba(255,255,255,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;z-index:100}
 .nav-logo{font-size:16px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px}
-.admin-badge{font-size:10px;font-weight:700;background:#ff3b30;color:#fff;padding:2px 7px;border-radius:980px;letter-spacing:.04em}
+.admin-badge{font-size:10px;font-weight:700;background:var(--red);color:#fff;padding:2px 7px;border-radius:980px;letter-spacing:.04em}
 .nav-right{display:flex;align-items:center;gap:12px}
 .admin-info{font-size:12px;color:var(--ink3)}
 .signout{font-size:13px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:inherit}
@@ -29,66 +28,79 @@ nav{height:var(--nav-h);background:rgba(255,255,255,.9);backdrop-filter:blur(20p
 .layout{flex:1;display:flex;overflow:hidden}
 
 /* SIDEBAR */
-.sidebar{width:320px;flex-shrink:0;background:#fff;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.sidebar-head{padding:16px 20px;border-bottom:.5px solid var(--border);flex-shrink:0}
-.sidebar-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:2px}
-.sidebar-sub{font-size:12px;color:var(--ink3)}
-.filter-tabs{display:flex;gap:4px;padding:12px 16px;border-bottom:.5px solid var(--border);flex-shrink:0}
-.filter-tab{font-size:12px;font-weight:600;padding:5px 12px;border-radius:980px;border:none;cursor:pointer;font-family:inherit;transition:all .15s;background:rgba(0,0,0,.05);color:var(--ink3)}
+.sidebar{width:300px;flex-shrink:0;background:#fff;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-head{padding:14px 18px;border-bottom:.5px solid var(--border);flex-shrink:0}
+.sidebar-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.sidebar-sub{font-size:11px;color:var(--ink3)}
+.filter-tabs{display:flex;gap:4px;padding:10px 14px;border-bottom:.5px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.filter-tab{font-size:11px;font-weight:600;padding:4px 10px;border-radius:980px;border:none;cursor:pointer;font-family:inherit;transition:all .15s;background:rgba(0,0,0,.05);color:var(--ink3)}
 .filter-tab.active{background:var(--blue);color:#fff}
 .room-list{flex:1;overflow-y:auto}
-.room-item{padding:14px 20px;cursor:pointer;border-left:3px solid transparent;transition:background .1s;border-bottom:.5px solid rgba(0,0,0,.04)}
+.room-item{padding:12px 16px;cursor:pointer;border-left:3px solid transparent;transition:background .1s;border-bottom:.5px solid rgba(0,0,0,.04);position:relative}
 .room-item:hover{background:rgba(0,0,0,.02)}
 .room-item.active{background:rgba(0,113,227,.06);border-left-color:var(--blue)}
 .room-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:8px}
-.room-user{font-size:14px;font-weight:600;color:var(--ink);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.room-time{font-size:11px;color:var(--ink3);flex-shrink:0}
-.room-preview{font-size:12px;color:var(--ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px}
+.room-user{font-size:13px;font-weight:600;color:var(--ink);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room-time{font-size:10px;color:var(--ink3);flex-shrink:0}
+.room-preview{font-size:11px;color:var(--ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px;padding-right:22px}
 .room-footer{display:flex;align-items:center;gap:6px}
+.room-email{font-size:10px;color:var(--ink3)}
+.room-empty{padding:48px 16px;text-align:center;color:var(--ink3);font-size:13px;line-height:1.7}
+/* 삭제 버튼 */
+.room-del{display:none;position:absolute;right:10px;top:14px;width:20px;height:20px;border-radius:50%;background:transparent;color:#c7c7cc;border:none;font-size:11px;cursor:pointer;align-items:center;justify-content:center;line-height:1;transition:background .15s,color .15s;padding:0}
+.room-item:hover .room-del{display:flex}
+.room-del:hover{background:rgba(255,59,48,.1);color:var(--red)}
+
+/* 상태 배지 */
 .badge-unanswered{font-size:10px;font-weight:700;background:rgba(255,149,0,.15);color:#c07800;padding:2px 7px;border-radius:980px}
-.badge-answered{font-size:10px;font-weight:600;background:rgba(52,199,89,.12);color:#248a3d;padding:2px 7px;border-radius:980px}
-.badge-new{font-size:10px;font-weight:700;background:var(--blue);color:#fff;padding:2px 7px;border-radius:980px}
-.room-email{font-size:11px;color:var(--ink3)}
-.room-empty{padding:48px 20px;text-align:center;color:var(--ink3);font-size:14px;line-height:1.7}
+.badge-inprogress{font-size:10px;font-weight:700;background:rgba(0,113,227,.12);color:var(--blue);padding:2px 7px;border-radius:980px}
+.badge-closed{font-size:10px;font-weight:700;background:rgba(52,199,89,.12);color:#248a3d;padding:2px 7px;border-radius:980px}
 
 /* MAIN */
 .chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff}
 .no-room{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--ink3);background:var(--bg)}
 .no-room-icon{font-size:48px}
-.no-room-text{font-size:16px;font-weight:600}
-.no-room-sub{font-size:13px;color:var(--ink3)}
+.no-room-text{font-size:16px;font-weight:600;color:var(--ink3)}
+.no-room-sub{font-size:13px}
 
 /* CHAT HEADER */
-.chat-head{padding:16px 24px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#fff}
-.chat-head-left{display:flex;align-items:center;gap:10px}
-.chat-user-avatar{width:36px;height:36px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:700;flex-shrink:0;overflow:hidden}
+.chat-head{padding:14px 22px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#fff;gap:12px}
+.chat-head-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.chat-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700;flex-shrink:0;overflow:hidden}
 .chat-user-avatar img{width:100%;height:100%;object-fit:cover}
-.chat-user-name{font-size:15px;font-weight:600;color:var(--ink)}
-.chat-user-email{font-size:12px;color:var(--ink3);margin-top:1px}
-.chat-status{display:flex;align-items:center;gap:8px}
+.chat-user-name{font-size:14px;font-weight:600;color:var(--ink)}
+.chat-user-email{font-size:11px;color:var(--ink3);margin-top:1px}
+.chat-head-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.close-room-btn{font-size:12px;font-weight:600;padding:6px 13px;border-radius:980px;border:1.5px solid rgba(255,59,48,.4);color:var(--red);background:rgba(255,59,48,.06);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.close-room-btn:hover{background:rgba(255,59,48,.12);border-color:var(--red)}
+.close-room-btn:disabled{opacity:.4;cursor:default}
 
 /* MESSAGES */
-.chat-messages{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.chat-messages{flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
 .msg-wrap{display:flex;flex-direction:column}
 .msg-wrap.mine{align-items:flex-end}
 .msg-wrap.theirs{align-items:flex-start}
 .msg-row{display:flex;align-items:flex-end;gap:8px;max-width:68%}
 .msg-wrap.mine .msg-row{flex-direction:row-reverse}
-.av{width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.av{width:30px;height:30px;border-radius:50%;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
 .bubble{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.6;word-break:break-word;white-space:pre-wrap}
 .msg-wrap.mine .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
 .msg-wrap.theirs .bubble{background:#fff;color:var(--ink);border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .msg-time{font-size:10px;color:var(--ink3);margin-top:4px;padding:0 4px}
-.msg-date-divider{text-align:center;font-size:11px;color:var(--ink3);padding:8px 0;flex-shrink:0}
+.msg-date-divider{text-align:center;font-size:11px;color:var(--ink3);padding:6px 0}
+/* 시스템 메시지 (채팅 종결) */
+.msg-system{text-align:center;font-size:12px;color:var(--ink3);padding:8px 16px;background:rgba(0,0,0,.04);border-radius:12px;margin:4px auto;max-width:280px}
 
 /* INPUT */
-.reply-wrap{padding:16px 24px;background:#fff;border-top:.5px solid var(--border);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
-.reply-input{flex:1;border:1.5px solid var(--border);border-radius:16px;padding:10px 16px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:160px;line-height:1.55;background:var(--bg);color:var(--ink);transition:border-color .15s}
+.reply-wrap{padding:14px 22px;background:#fff;border-top:.5px solid var(--border);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.reply-input{flex:1;border:1.5px solid var(--border);border-radius:14px;padding:10px 14px;font-size:14px;font-family:inherit;resize:none;outline:none;max-height:140px;line-height:1.55;background:var(--bg);color:var(--ink);transition:border-color .15s}
 .reply-input:focus{border-color:var(--blue);background:#fff}
-.reply-btn{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s,opacity .15s;display:flex;align-items:center;gap:6px}
+.reply-btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s,opacity .15s;display:flex;align-items:center;gap:6px}
 .reply-btn:hover{background:var(--blue2)}
 .reply-btn:disabled{opacity:.45;cursor:default}
-.email-info{font-size:11px;color:var(--ink3);padding:0 24px 10px;background:#fff}
+.email-info{font-size:11px;color:var(--ink3);padding:0 22px 8px;background:#fff}
+/* 종결된 채팅 안내 */
+.closed-notice{padding:14px 22px;background:#fff;border-top:.5px solid var(--border);text-align:center;font-size:13px;color:var(--ink3);flex-shrink:0}
 
 /* LOGIN */
 #login-view{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg)}
@@ -98,19 +110,30 @@ nav{height:var(--nav-h);background:rgba(255,255,255,.9);backdrop-filter:blur(20p
 .google-btn{width:100%;padding:13px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 0 0 1.5px rgba(0,0,0,.12);transition:box-shadow .15s}
 .google-btn:hover{box-shadow:0 0 0 1.5px rgba(0,0,0,.25)}
 
-/* Toast */
+/* TOAST */
 .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:#1d1d1f;color:#fff;font-size:13px;padding:10px 20px;border-radius:980px;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;z-index:9999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 삭제 모달 */
+.del-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.del-overlay.open{display:flex}
+.del-modal{background:#fff;border-radius:20px;padding:30px 26px 22px;width:300px;max-width:90vw;text-align:center;animation:modalIn .25s cubic-bezier(.34,1.56,.64,1) both}
+.del-modal h3{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.del-modal-desc{font-size:13px;color:var(--ink3);line-height:1.65;margin-bottom:22px}
+.del-modal-desc strong{color:var(--ink)}
+.del-actions{display:flex;gap:8px}
+.del-cancel{flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:none;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;font-family:inherit;transition:background .15s}
+.del-cancel:hover{background:rgba(0,0,0,.04)}
+.del-confirm{flex:1;padding:11px;border-radius:12px;border:none;background:var(--red);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.del-confirm:hover{background:#e0352b}
+
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="nav-logo">
-    🧭 방랑클럽
-    <span class="admin-badge">ADMIN</span>
-  </div>
+  <div class="nav-logo">🧭 방랑클럽 <span class="admin-badge">ADMIN</span></div>
   <div class="nav-right">
     <span class="admin-info" id="admin-info"></span>
     <button class="signout" onclick="doSignOut()">로그아웃</button>
@@ -132,53 +155,58 @@ nav{height:var(--nav-h);background:rgba(255,255,255,.9);backdrop-filter:blur(20p
 
 <!-- ADMIN VIEW -->
 <div id="admin-view" class="layout" style="display:none">
-
-  <!-- 사이드바 -->
   <div class="sidebar">
     <div class="sidebar-head">
       <div class="sidebar-title">채팅 목록</div>
       <div class="sidebar-sub" id="room-count">불러오는 중...</div>
     </div>
+    <!-- 필터: 전체 / 미답변 / 답변 중 / 답변완료 -->
     <div class="filter-tabs">
       <button class="filter-tab active" onclick="setFilter('all',this)">전체</button>
       <button class="filter-tab" onclick="setFilter('unanswered',this)">미답변</button>
-      <button class="filter-tab" onclick="setFilter('answered',this)">답변완료</button>
+      <button class="filter-tab" onclick="setFilter('in_progress',this)">답변 중</button>
+      <button class="filter-tab" onclick="setFilter('closed',this)">답변완료</button>
     </div>
     <div class="room-list" id="room-list">
       <div class="room-empty">불러오는 중...</div>
     </div>
   </div>
 
-  <!-- 채팅 메인 -->
   <div class="chat-main" id="chat-main">
-    <div class="no-room" id="no-room">
+    <div class="no-room">
       <div class="no-room-icon">💬</div>
       <div class="no-room-text">채팅방을 선택해주세요</div>
       <div class="no-room-sub">왼쪽 목록에서 답변할 채팅을 클릭하세요</div>
     </div>
   </div>
-
 </div>
 
-<!-- Toast -->
+<!-- 삭제 확인 모달 -->
+<div class="del-overlay" id="del-overlay" onclick="overlayDelClick(event)">
+  <div class="del-modal">
+    <h3>채팅방 삭제</h3>
+    <p class="del-modal-desc" id="del-modal-desc">이 채팅방을 삭제하시겠습니까?<br>삭제된 대화는 복구할 수 없어요.</p>
+    <div class="del-actions">
+      <button class="del-cancel" onclick="closeDelModal()">취소</button>
+      <button class="del-confirm" id="del-confirm-btn">삭제</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp }      from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
                                from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, query, orderBy, onSnapshot,
-         doc, addDoc, updateDoc, serverTimestamp, getDoc }
+         doc, addDoc, updateDoc, serverTimestamp, getDocs, writeBatch }
                                from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-/* ── 설정 ── */
-const ADMIN_EMAIL = 'a912243@gmail.com';
-
-// EmailJS 설정 (https://emailjs.com 에서 발급)
-const EJS_PUBLIC_KEY  = 'YOUR_EMAILJS_PUBLIC_KEY';   // TODO
-const EJS_SERVICE_ID  = 'YOUR_EMAILJS_SERVICE_ID';   // TODO
-const EJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';  // TODO
+const ADMIN_EMAIL     = 'a912243@gmail.com';
+const EJS_PUBLIC_KEY  = 'YOUR_EMAILJS_PUBLIC_KEY';
+const EJS_SERVICE_ID  = 'YOUR_EMAILJS_SERVICE_ID';
+const EJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
 
 const firebaseConfig = {
   apiKey:            "AIzaSyAi8GH9BFKRi4AZwAaCQhcEh6Fbb--69SA",
@@ -193,20 +221,31 @@ const app  = initializeApp(firebaseConfig, 'banglang-admin');
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-/* ── 상태 ── */
-let currentAdmin    = null;
-let allRooms        = [];
-let currentFilter   = 'all';
-let currentRoomId   = null;
-let unsubMessages   = null;
-let unsubRooms      = null;
+let currentAdmin      = null;
+let allRooms          = [];
+let currentFilter     = 'all';
+let currentRoomId     = null;
+let unsubMessages     = null;
+let unsubCurrentRoom  = null;  // 현재 열린 방 실시간 감지
+let unsubRooms        = null;
+let pendingDeleteId   = null;
+
+/* ── 상태 헬퍼 ── */
+// Firestore의 status 필드 기준. 없으면 answered 필드로 하위호환
+function getStatus(room) {
+  if (room.status) return room.status;
+  return room.answered ? 'in_progress' : 'unanswered';
+}
+
+function statusBadge(status) {
+  if (status === 'closed')      return '<span class="badge-closed">답변완료</span>';
+  if (status === 'in_progress') return '<span class="badge-inprogress">답변 중</span>';
+  return '<span class="badge-unanswered">미답변</span>';
+}
 
 /* ── Auth ── */
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    showLogin();
-    return;
-  }
+  if (!user) { showLogin(); return; }
   if (user.email !== ADMIN_EMAIL) {
     alert('관리자 계정이 아닙니다.');
     signOut(auth);
@@ -216,25 +255,23 @@ onAuthStateChanged(auth, user => {
   document.getElementById('admin-info').textContent = user.email;
   showAdmin();
   listenRooms();
-  if (EJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
-    emailjs.init(EJS_PUBLIC_KEY);
-  }
+  if (EJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') emailjs.init(EJS_PUBLIC_KEY);
 });
 
 function showLogin() {
-  document.getElementById('login-view').style.display  = 'flex';
-  document.getElementById('admin-view').style.display  = 'none';
+  document.getElementById('login-view').style.display = 'flex';
+  document.getElementById('admin-view').style.display = 'none';
 }
 function showAdmin() {
-  document.getElementById('login-view').style.display  = 'none';
-  document.getElementById('admin-view').style.display  = 'flex';
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('admin-view').style.display = 'flex';
 }
 
 /* ── 채팅방 목록 실시간 ── */
 function listenRooms() {
   if (unsubRooms) unsubRooms();
-  const q = query(collection(db, 'chatRooms'), orderBy('lastMessageAt', 'desc'));
-  unsubRooms = onSnapshot(q, snap => {
+  // lastMessageAt orderBy → Firestore 인덱스 필요할 수 있어 클라이언트 정렬로 대체
+  unsubRooms = onSnapshot(collection(db, 'chatRooms'), snap => {
     allRooms = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderRooms();
   });
@@ -248,23 +285,29 @@ window.setFilter = function(f, btn) {
 };
 
 function renderRooms() {
-  let rooms = allRooms;
-  if (currentFilter === 'unanswered') rooms = allRooms.filter(r => !r.answered);
-  if (currentFilter === 'answered')   rooms = allRooms.filter(r => r.answered);
+  const statusOrder = { unanswered: 0, in_progress: 1, closed: 2 };
 
-  // 미답변 먼저
+  let rooms = allRooms;
+  if (currentFilter !== 'all') {
+    rooms = allRooms.filter(r => getStatus(r) === currentFilter);
+  }
+
+  // 상태순 → 최신 메시지순
   rooms = [...rooms].sort((a, b) => {
-    if (!a.answered && b.answered) return -1;
-    if (a.answered && !b.answered) return 1;
-    const ta = a.lastMessageAt?.toDate?.() || 0;
-    const tb = b.lastMessageAt?.toDate?.() || 0;
+    const sa = statusOrder[getStatus(a)] ?? 3;
+    const sb = statusOrder[getStatus(b)] ?? 3;
+    if (sa !== sb) return sa - sb;
+    const ta = a.lastMessageAt?.toMillis?.() || 0;
+    const tb = b.lastMessageAt?.toMillis?.() || 0;
     return tb - ta;
   });
 
-  const total      = allRooms.length;
-  const unanswered = allRooms.filter(r => !r.answered).length;
+  // 카운트
+  const unanswered  = allRooms.filter(r => getStatus(r) === 'unanswered').length;
+  const inprogress  = allRooms.filter(r => getStatus(r) === 'in_progress').length;
+  const closed      = allRooms.filter(r => getStatus(r) === 'closed').length;
   document.getElementById('room-count').textContent =
-    `전체 ${total}건 · 미답변 ${unanswered}건`;
+    `전체 ${allRooms.length}건 · 미답변 ${unanswered} · 답변중 ${inprogress} · 종결 ${closed}`;
 
   const list = document.getElementById('room-list');
   if (!rooms.length) {
@@ -274,15 +317,12 @@ function renderRooms() {
 
   list.innerHTML = rooms.map(r => {
     const isActive = r.id === currentRoomId ? ' active' : '';
-    const time     = r.lastMessageAt ? timeAgo(r.lastMessageAt.toDate()) : '';
-    const badge    = r.answered
-      ? `<span class="badge-answered">답변완료</span>`
-      : `<span class="badge-unanswered">미답변</span>`;
-    const newBadge = r.userUnread ? '' : '';  // 사용자 미확인 여부
+    const time     = r.lastMessageAt?.toDate ? timeAgo(r.lastMessageAt.toDate()) : '';
+    const status   = getStatus(r);
     const avatar   = r.userPhotoURL
-      ? `<img src="${escHtml(r.userPhotoURL)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0">`
-      : `<div style="width:32px;height:32px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700;flex-shrink:0">${escHtml((r.userName||'?')[0])}</div>`;
-    return `<div class="room-item${isActive}" onclick="openRoom('${r.id}')">
+      ? `<img src="${escHtml(r.userPhotoURL)}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0">`
+      : `<div style="width:30px;height:30px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;flex-shrink:0">${escHtml((r.userName||'?')[0])}</div>`;
+    return `<div class="room-item${isActive}" data-room-id="${r.id}" onclick="openRoom('${r.id}')">
       <div class="room-top">
         <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
           ${avatar}
@@ -294,7 +334,8 @@ function renderRooms() {
         <div class="room-time">${time}</div>
       </div>
       <div class="room-preview">${escHtml(r.lastMessage || '대화 없음')}</div>
-      <div class="room-footer">${badge}</div>
+      <div class="room-footer">${statusBadge(status)}</div>
+      <button class="room-del" onclick="promptAdminDelete(event,'${r.id}','${escAttr(r.userName||r.userEmail||'채팅방')}')" title="삭제">✕</button>
     </div>`;
   }).join('');
 }
@@ -302,65 +343,113 @@ function renderRooms() {
 /* ── 채팅방 열기 ── */
 window.openRoom = function(roomId) {
   currentRoomId = roomId;
-  renderRooms(); // active 표시 업데이트
+  document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
+  document.querySelector(`.room-item[data-room-id="${roomId}"]`)?.classList.add('active');
 
   const room = allRooms.find(r => r.id === roomId);
   if (!room) return;
 
   const main = document.getElementById('chat-main');
-  const avatarHtml = room.userPhotoURL
-    ? `<img src="${escHtml(room.userPhotoURL)}">`
-    : `<div class="chat-user-avatar">${escHtml((room.userName||'?')[0])}</div>`;
+  const status = getStatus(room);
 
   main.innerHTML = `
     <div class="chat-head">
       <div class="chat-head-left">
-        <div class="chat-user-avatar">${room.userPhotoURL ? `<img src="${escHtml(room.userPhotoURL)}">` : escHtml((room.userName||'?')[0])}</div>
+        <div class="chat-user-avatar">${room.userPhotoURL
+          ? `<img src="${escHtml(room.userPhotoURL)}">`
+          : escHtml((room.userName||'?')[0])
+        }</div>
         <div>
           <div class="chat-user-name">${escHtml(room.userName || '이름없음')}</div>
           <div class="chat-user-email">${escHtml(room.userEmail || '')}</div>
         </div>
       </div>
-      <div class="chat-status">
-        <span id="room-status-badge" class="${room.answered ? 'badge-answered' : 'badge-unanswered'}">
-          ${room.answered ? '답변완료' : '미답변'}
-        </span>
+      <div class="chat-head-right">
+        <span id="admin-status-badge">${statusBadge(status)}</span>
+        <button class="close-room-btn" id="close-room-btn"
+          onclick="closeRoom('${roomId}')"
+          ${status === 'closed' ? 'disabled' : ''}>
+          ${status === 'closed' ? '종결됨' : '채팅 끝내기'}
+        </button>
       </div>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="email-info" id="email-info">
       ✉️ 답변 시 <strong>${escHtml(room.userEmail||'')}</strong> 으로 이메일이 발송됩니다
     </div>
-    <div class="reply-wrap">
-      <textarea class="reply-input" id="reply-input" rows="2"
-        placeholder="답변을 입력하세요… (Shift+Enter: 줄바꿈)"
-        oninput="autoResize(this)" onkeydown="replyKeydown(event)"></textarea>
-      <button class="reply-btn" id="reply-btn" onclick="sendReply()">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l3 6-3 6 12-6z" fill="white"/></svg>
-        답변 보내기
-      </button>
-    </div>`;
+    ${status === 'closed'
+      ? `<div class="closed-notice">🔒 종결된 채팅방입니다</div>`
+      : `<div class="reply-wrap">
+          <textarea class="reply-input" id="reply-input" rows="2"
+            placeholder="답변을 입력하세요… (Shift+Enter: 줄바꿈)"
+            oninput="autoResize(this)" onkeydown="replyKeydown(event)"></textarea>
+          <button class="reply-btn" id="reply-btn" onclick="sendReply()">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l3 6-3 6 12-6z" fill="white"/></svg>
+            답변 보내기
+          </button>
+        </div>`
+    }`;
 
   listenMessages(roomId);
+  listenCurrentRoom(roomId);
 };
+
+/* ── 현재 채팅방 실시간 감지 (상태 변경 실시간 반영) ── */
+function listenCurrentRoom(roomId) {
+  if (unsubCurrentRoom) unsubCurrentRoom();
+  unsubCurrentRoom = onSnapshot(doc(db, 'chatRooms', roomId), snap => {
+    if (!snap.exists()) return;
+    const room   = snap.data();
+    const status = getStatus(room);
+
+    // 배지 업데이트
+    const badgeEl = document.getElementById('admin-status-badge');
+    if (badgeEl) badgeEl.innerHTML = statusBadge(status);
+
+    // 종결 버튼 업데이트
+    const closeBtn = document.getElementById('close-room-btn');
+    if (closeBtn) {
+      closeBtn.disabled   = status === 'closed';
+      closeBtn.textContent = status === 'closed' ? '종결됨' : '채팅 끝내기';
+    }
+
+    // 입력창 ↔ 종결 안내 전환
+    const chatMain = document.getElementById('chat-main');
+    const existing = chatMain?.querySelector('.reply-wrap, .closed-notice');
+    if (!existing) return;
+
+    if (status === 'closed' && existing.classList.contains('reply-wrap')) {
+      const notice = document.createElement('div');
+      notice.className = 'closed-notice';
+      notice.textContent = '🔒 종결된 채팅방입니다';
+      existing.replaceWith(notice);
+    } else if (status !== 'closed' && existing.classList.contains('closed-notice')) {
+      existing.outerHTML = `<div class="reply-wrap">
+        <textarea class="reply-input" id="reply-input" rows="2"
+          placeholder="답변을 입력하세요… (Shift+Enter: 줄바꿈)"
+          oninput="autoResize(this)" onkeydown="replyKeydown(event)"></textarea>
+        <button class="reply-btn" id="reply-btn" onclick="sendReply()">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l3 6-3 6 12-6z" fill="white"/></svg>
+          답변 보내기
+        </button>
+      </div>`;
+    }
+  });
+}
 
 /* ── 메시지 실시간 ── */
 function listenMessages(roomId) {
   if (unsubMessages) unsubMessages();
-  const q = query(
-    collection(db, 'chatRooms', roomId, 'messages'),
-    orderBy('createdAt', 'asc')
-  );
+  const q = query(collection(db, 'chatRooms', roomId, 'messages'), orderBy('createdAt', 'asc'));
   unsubMessages = onSnapshot(q, snap => {
     const box = document.getElementById('chat-messages');
     if (!box) return;
 
     const room = allRooms.find(r => r.id === roomId);
 
-    // 웰컴 메시지
     const welcome = `<div class="msg-wrap mine">
       <div class="msg-row">
-        <div class="av" style="background:#1d1d1f;font-size:14px">🧭</div>
+        <div class="av" style="background:#1d1d1f;font-size:13px">🧭</div>
         <div class="bubble">안녕하세요! 방랑클럽입니다 😊<br>어떤 여행 고민이든 편하게 말씀해주세요.<br>최대한 빠르게 답변 드릴게요.</div>
       </div>
     </div>`;
@@ -369,19 +458,26 @@ function listenMessages(roomId) {
     const msgs = snap.docs.map(d => {
       const m       = d.data();
       const isAdmin = m.senderType === 'admin';
+      const isSystem = m.senderType === 'system';
       const side    = isAdmin ? 'mine' : 'theirs';
       const time    = m.createdAt ? formatTime(m.createdAt.toDate()) : '';
       const dateStr = m.createdAt ? formatDate(m.createdAt.toDate()) : '';
       let divider   = '';
       if (dateStr && dateStr !== lastDate) {
-        divider   = `<div class="msg-date-divider">${dateStr}</div>`;
-        lastDate  = dateStr;
+        divider  = `<div class="msg-date-divider">${dateStr}</div>`;
+        lastDate = dateStr;
       }
+
+      if (isSystem) {
+        return `${divider}<div class="msg-system">${escHtml(m.text)}</div>`;
+      }
+
       const av = isAdmin
-        ? `<div class="av" style="background:#1d1d1f;font-size:14px">🧭</div>`
+        ? `<div class="av" style="background:#1d1d1f;font-size:13px">🧭</div>`
         : (room?.userPhotoURL
-          ? `<div class="av" style="overflow:hidden"><img src="${escHtml(room.userPhotoURL)}" style="width:32px;height:32px;object-fit:cover"></div>`
+          ? `<div class="av" style="overflow:hidden"><img src="${escHtml(room.userPhotoURL)}" style="width:30px;height:30px;object-fit:cover"></div>`
           : `<div class="av" style="background:var(--blue)">${escHtml((room?.userName||'?')[0])}</div>`);
+
       return `${divider}<div class="msg-wrap ${side}">
         <div class="msg-row">${av}<div class="bubble">${escHtml(m.text).replace(/\n/g,'<br>')}</div></div>
         <div class="msg-time">${isAdmin ? '🧭 방랑클럽 · ' : ''}${time}</div>
@@ -390,75 +486,138 @@ function listenMessages(roomId) {
 
     box.innerHTML = welcome + msgs;
     box.scrollTop = box.scrollHeight;
-
-    // 배지 업데이트
-    const hasAdmin  = snap.docs.some(d => d.data().senderType === 'admin');
-    const badge     = document.getElementById('room-status-badge');
-    if (badge) {
-      badge.textContent = hasAdmin ? '답변완료' : '미답변';
-      badge.className   = hasAdmin ? 'badge-answered' : 'badge-unanswered';
-    }
   });
 }
 
-/* ── 답변 전송 ── */
+/* ── 답변 전송 → status: 'in_progress' ── */
 window.sendReply = async function() {
   const input = document.getElementById('reply-input');
   const text  = (input?.value || '').trim();
   if (!text || !currentRoomId) return;
 
   const btn = document.getElementById('reply-btn');
-  btn.disabled = true;
-  btn.textContent = '전송 중...';
+  if (btn) { btn.disabled = true; btn.textContent = '전송 중...'; }
 
   const room = allRooms.find(r => r.id === currentRoomId);
 
   try {
-    // ① Firestore에 메시지 저장
     await addDoc(collection(db, 'chatRooms', currentRoomId, 'messages'), {
       text,
-      senderId:    'admin',
-      senderType:  'admin',
-      senderName:  '방랑클럽',
-      createdAt:   serverTimestamp(),
+      senderId:   'admin',
+      senderType: 'admin',
+      senderName: '방랑클럽',
+      createdAt:  serverTimestamp(),
     });
 
-    // ② 채팅방 상태 업데이트
     await updateDoc(doc(db, 'chatRooms', currentRoomId), {
       lastMessage:   text,
       lastMessageAt: serverTimestamp(),
-      answered:      true,
+      status:        'in_progress',   // ← 답변 중
+      answered:      true,             // 하위호환
       userUnread:    true,
     });
 
-    input.value = '';
-    input.style.height = '';
+    if (input) { input.value = ''; input.style.height = ''; }
 
-    // ③ 이메일 알림 발송
     if (EJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && room?.userEmail) {
       await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
         to_email:   room.userEmail,
         to_name:    room.userName || '고객',
         reply_text: text,
-        site_link:  'https://banglang-club.vercel.app/',
+        site_link:  'https://banglang-club.vercel.app/chat',
       });
       showToast('✅ 답변 전송 + 이메일 발송 완료');
     } else {
-      showToast('✅ 답변이 전송됐습니다 (이메일 미설정)');
+      showToast('✅ 답변이 전송됐습니다');
     }
   } catch(e) {
     showToast('❌ 오류: ' + e.message);
   }
 
-  btn.disabled = false;
-  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l3 6-3 6 12-6z" fill="white"/></svg> 답변 보내기`;
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l3 6-3 6 12-6z" fill="white"/></svg> 답변 보내기`;
+  }
 };
 
-window.replyKeydown = function(e) {
+/* ── 채팅 종결 ── */
+window.closeRoom = async function(roomId) {
+  if (!roomId) return;
+  if (!confirm('이 채팅방을 종결하시겠습니까?\n사용자에게 더 이상 답변이 불가능해집니다.')) return;
+
+  try {
+    // 시스템 메시지 추가
+    await addDoc(collection(db, 'chatRooms', roomId, 'messages'), {
+      text:       '채팅이 종결됐습니다. 이용해주셔서 감사합니다 🙏',
+      senderType: 'system',
+      createdAt:  serverTimestamp(),
+    });
+
+    await updateDoc(doc(db, 'chatRooms', roomId), {
+      status:        'closed',
+      answered:      true,
+      lastMessageAt: serverTimestamp(),
+      closedAt:      serverTimestamp(),
+      closedBy:      'admin',
+    });
+
+    showToast('🔒 채팅방이 종결됐습니다');
+  } catch(e) {
+    showToast('❌ 오류: ' + e.message);
+  }
+};
+
+/* ── 채팅방 삭제 ── */
+window.promptAdminDelete = function(e, roomId, title) {
+  e.stopPropagation();
+  pendingDeleteId = roomId;
+  document.getElementById('del-modal-desc').innerHTML =
+    `<strong>${escHtml(title)}</strong>의 채팅방을 삭제하시겠습니까?<br>삭제된 대화는 복구할 수 없어요.`;
+  document.getElementById('del-confirm-btn').onclick = confirmAdminDelete;
+  document.getElementById('del-overlay').classList.add('open');
+};
+
+window.closeDelModal = function() {
+  document.getElementById('del-overlay').classList.remove('open');
+  pendingDeleteId = null;
+};
+
+window.overlayDelClick = function(e) {
+  if (e.target === document.getElementById('del-overlay')) closeDelModal();
+};
+
+async function confirmAdminDelete() {
+  if (!pendingDeleteId) return;
+  const roomId = pendingDeleteId;
+  closeDelModal();
+  try {
+    const msgsSnap = await getDocs(collection(db, 'chatRooms', roomId, 'messages'));
+    const batch = writeBatch(db);
+    msgsSnap.forEach(d => batch.delete(d.ref));
+    batch.delete(doc(db, 'chatRooms', roomId));
+    await batch.commit();
+
+    if (currentRoomId === roomId) {
+      currentRoomId = null;
+      if (unsubMessages)    { unsubMessages();    unsubMessages    = null; }
+      if (unsubCurrentRoom) { unsubCurrentRoom(); unsubCurrentRoom = null; }
+      document.getElementById('chat-main').innerHTML = `
+        <div class="no-room">
+          <div class="no-room-icon">💬</div>
+          <div class="no-room-text">채팅방을 선택해주세요</div>
+          <div class="no-room-sub">왼쪽 목록에서 답변할 채팅을 클릭하세요</div>
+        </div>`;
+    }
+    showToast('🗑️ 채팅방이 삭제됐습니다');
+  } catch(err) {
+    showToast('❌ 삭제 오류: ' + err.message);
+  }
+}
+
+window.replyKeydown = e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendReply(); }
 };
 
-/* ── Google 로그인 ── */
 window.loginGoogle = async () => {
   try { await signInWithPopup(auth, new GoogleAuthProvider()); }
   catch(e) { if (e.code !== 'auth/popup-closed-by-user') alert(e.message); }
@@ -468,6 +627,9 @@ window.doSignOut = () => signOut(auth);
 /* ── 유틸 ── */
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+  return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
 }
 function formatTime(d) {
   return d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
@@ -483,10 +645,9 @@ function timeAgo(d) {
   return Math.floor(s/86400)+'일 전';
 }
 window.autoResize = el => {
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,160)+'px';
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
 };
-
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -494,6 +655,5 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 </script>
-
 </body>
 </html>
