@@ -101,18 +101,19 @@ nav.scrolled{box-shadow:0 1px 16px rgba(0,0,0,.07)}
 .bio-item{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink2);line-height:1.55}
 .bio-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:6px}
 
-/* ── 세계지도 ── */
-.map-wrap{width:100%;max-width:860px;margin-top:40px}
-.map-label{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
-.world-map-container{background:#e8f4fd;border-radius:16px;overflow:hidden;border:1px solid rgba(0,0,0,.06);position:relative}
-.world-map-container svg{width:100%;height:auto;display:block}
-/* 핀 펄스 애니메이션 */
-.pin-pulse{animation:pinPulse 2s ease-in-out infinite}
-@keyframes pinPulse{0%,100%{opacity:.4;r:7}50%{opacity:.8;r:9}}
-.country-pin{cursor:pointer}
-.country-pin:hover .pin-dot{fill:#15803d}
-.country-pin:hover .pin-label{opacity:1}
-.pin-label{opacity:0;transition:opacity .2s;pointer-events:none}
+/* ── 국가 슬라이더 ── */
+.countries-wrap{width:100%;margin-top:32px}
+.countries-label{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;text-align:left}
+.countries-slider{overflow:hidden;position:relative;border-radius:16px}
+.countries-slider::before,.countries-slider::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.countries-slider::before{left:0;background:linear-gradient(to right,#fff,transparent)}
+.countries-slider::after{right:0;background:linear-gradient(to left,#fff,transparent)}
+.countries-track{display:flex;gap:10px;width:max-content;animation:countryScroll 28s linear infinite;padding:6px 0 10px}
+.countries-track:hover{animation-play-state:paused}
+.country-chip{display:inline-flex;align-items:center;gap:7px;background:#f0fdf4;border:1px solid rgba(22,163,74,.2);border-radius:980px;padding:8px 16px;white-space:nowrap;font-size:14px;font-weight:600;color:var(--ink2);cursor:default;transition:all .18s;flex-shrink:0}
+.country-chip:hover{background:var(--green3);border-color:rgba(22,163,74,.4);transform:scale(1.04);box-shadow:0 4px 16px rgba(22,163,74,.15)}
+.country-chip .flag{font-size:17px;line-height:1}
+@keyframes countryScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ── CTA ── */
 .cta-section{background:linear-gradient(135deg,var(--green) 0%,#14532d 100%);padding:112px 24px;text-align:center}
@@ -366,92 +367,12 @@ footer{border-top:.5px solid var(--border);padding:26px 28px;display:flex;align-
         </div>
       </div>
 
-      <!-- 세계 지도 -->
-      <div class="map-label">방문한 나라 · 19개국</div>
-      <div class="world-map-container">
-        <svg viewBox="0 0 900 430" xmlns="http://www.w3.org/2000/svg" style="max-height:280px">
-          <!-- 바다 -->
-          <rect width="900" height="430" fill="#dbeafe"/>
-
-          <!-- ── 대륙 ── -->
-          <!-- 북아메리카 -->
-          <path d="M82,85 L115,65 L162,52 L215,55 L258,65 L282,88 L278,118 L260,148 L242,172 L222,192 L200,212 L178,228 L158,248 L140,260 L128,246 L115,220 L105,192 L98,162 L90,132 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-          <!-- 그린란드 -->
-          <path d="M295,20 L335,10 L372,14 L388,32 L382,52 L358,62 L330,65 L305,56 L294,38 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-          <!-- 남아메리카 -->
-          <path d="M190,248 L224,238 L262,244 L285,268 L290,302 L282,338 L268,372 L250,400 L230,410 L210,402 L194,378 L184,348 L182,315 L192,282 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-          <!-- 유럽 -->
-          <path d="M440,65 L468,54 L500,48 L532,52 L560,62 L578,78 L585,96 L578,112 L585,128 L566,138 L542,144 L515,142 L490,136 L468,124 L450,110 L442,92 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-          <!-- 아프리카 -->
-          <path d="M445,148 L478,138 L515,142 L550,138 L578,152 L585,178 L582,218 L572,262 L556,308 L536,342 L515,354 L496,344 L480,305 L470,262 L462,218 L452,178 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-          <!-- 아시아 (대) -->
-          <path d="M582,58 L638,46 L712,46 L788,52 L856,62 L915,78 L950,95 L952,128 L935,158 L910,178 L875,186 L840,180 L808,168 L778,178 L752,196 L728,208 L702,198 L678,206 L652,198 L628,180 L606,162 L592,144 L584,120 L584,92 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-          <!-- 동남아 반도 -->
-          <path d="M730,210 L752,200 L768,212 L772,232 L762,248 L745,248 L732,236 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-          <!-- 말레이 반도 -->
-          <path d="M752,240 L762,248 L768,268 L758,280 L748,275 L742,258 L746,244 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-          <!-- 일본 (참고용) -->
-          <ellipse cx="862" cy="138" rx="10" ry="20" fill="#d1d5db" transform="rotate(-20 862 138)"/>
-          <!-- 호주 -->
-          <path d="M718,300 L770,290 L828,294 L865,312 L870,340 L862,368 L845,386 L818,392 L790,384 L762,368 L742,348 L732,320 Z" fill="#d1d5db" stroke="#c5c9d0" stroke-width=".8"/>
-
-          <!-- ── 방문 국가 핀 ── -->
-          <defs>
-            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="rgba(22,163,74,.4)"/>
-            </filter>
-          </defs>
-
-          <!-- 유럽 클러스터 핀 -->
-          <!-- 독일 -->
-          <g class="country-pin"><circle cx="508" cy="100" r="5.5" fill="#16a34a" filter="url(#shadow)"/><circle cx="508" cy="100" r="9" fill="rgba(22,163,74,.2)" class="pin-pulse"/><title>🇩🇪 독일</title></g>
-          <!-- 프랑스 -->
-          <g class="country-pin"><circle cx="488" cy="114" r="5.5" fill="#16a34a" filter="url(#shadow)"/><circle cx="488" cy="114" r="9" fill="rgba(22,163,74,.2)" class="pin-pulse"/><title>🇫🇷 프랑스</title></g>
-          <!-- 벨기에 -->
-          <g class="country-pin"><circle cx="494" cy="103" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇧🇪 벨기에</title></g>
-          <!-- 스페인 -->
-          <g class="country-pin"><circle cx="470" cy="128" r="5.5" fill="#16a34a" filter="url(#shadow)"/><circle cx="470" cy="128" r="9" fill="rgba(22,163,74,.2)" class="pin-pulse"/><title>🇪🇸 스페인</title></g>
-          <!-- 네덜란드 -->
-          <g class="country-pin"><circle cx="496" cy="96" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇳🇱 네덜란드</title></g>
-          <!-- 오스트리아 -->
-          <g class="country-pin"><circle cx="522" cy="112" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇦🇹 오스트리아</title></g>
-          <!-- 폴란드 -->
-          <g class="country-pin"><circle cx="536" cy="98" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇵🇱 폴란드</title></g>
-          <!-- 헝가리 -->
-          <g class="country-pin"><circle cx="533" cy="112" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇭🇺 헝가리</title></g>
-          <!-- 체코 -->
-          <g class="country-pin"><circle cx="524" cy="103" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇨🇿 체코</title></g>
-          <!-- 슬로베니아 -->
-          <g class="country-pin"><circle cx="524" cy="116" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇸🇮 슬로베니아</title></g>
-          <!-- 스위스 -->
-          <g class="country-pin"><circle cx="504" cy="116" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇨🇭 스위스</title></g>
-          <!-- 러시아 -->
-          <g class="country-pin"><circle cx="710" cy="75" r="6" fill="#16a34a" filter="url(#shadow)"/><circle cx="710" cy="75" r="10" fill="rgba(22,163,74,.18)"/><title>🇷🇺 러시아</title></g>
-
-          <!-- 중앙아시아 -->
-          <!-- 카자흐스탄 -->
-          <g class="country-pin"><circle cx="635" cy="105" r="6" fill="#16a34a" filter="url(#shadow)"/><circle cx="635" cy="105" r="10" fill="rgba(22,163,74,.2)" class="pin-pulse"/><title>🇰🇿 카자흐스탄</title></g>
-          <!-- 우즈베키스탄 -->
-          <g class="country-pin"><circle cx="622" cy="122" r="6" fill="#16a34a" filter="url(#shadow)"/><title>🇺🇿 우즈베키스탄</title></g>
-
-          <!-- 아시아 -->
-          <!-- 대만 -->
-          <g class="country-pin"><circle cx="812" cy="168" r="5.5" fill="#16a34a" filter="url(#shadow)"/><circle cx="812" cy="168" r="9" fill="rgba(22,163,74,.2)" class="pin-pulse"/><title>🇹🇼 대만</title></g>
-          <!-- 베트남 -->
-          <g class="country-pin"><circle cx="768" cy="188" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇻🇳 베트남</title></g>
-          <!-- 태국 -->
-          <g class="country-pin"><circle cx="750" cy="195" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇹🇭 태국</title></g>
-          <!-- 싱가포르 -->
-          <g class="country-pin"><circle cx="762" cy="240" r="5.5" fill="#16a34a" filter="url(#shadow)"/><circle cx="762" cy="240" r="9" fill="rgba(22,163,74,.2)" class="pin-pulse"/><title>🇸🇬 싱가포르</title></g>
-          <!-- 말레이시아 -->
-          <g class="country-pin"><circle cx="756" cy="224" r="5.5" fill="#16a34a" filter="url(#shadow)"/><title>🇲🇾 말레이시아</title></g>
-
-          <!-- 범례 -->
-          <g transform="translate(18, 390)">
-            <circle cx="6" cy="6" r="5.5" fill="#16a34a"/>
-            <text x="16" y="10" font-family="-apple-system,sans-serif" font-size="11" fill="#6b7280">방문한 나라</text>
-          </g>
-        </svg>
+      <!-- 국가 슬라이더 -->
+      <div class="countries-wrap">
+        <div class="countries-label">방문한 나라 · 19개국</div>
+        <div class="countries-slider">
+          <div class="countries-track" id="countries-track"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -579,6 +500,24 @@ window.loginNaver=function(){
   sessionStorage.setItem('naver_state',s);
   window.location.href=`https://nid.naver.com/oauth2.0/authorize?response_type=token&client_id=${window.NAVER_CLIENT_ID}&redirect_uri=${r}&state=${s}`;
 };
+
+/* ── 국가 슬라이더 init ── */
+(function(){
+  const countries=[
+    {flag:'🇩🇪',name:'독일'},{flag:'🇫🇷',name:'프랑스'},{flag:'🇧🇪',name:'벨기에'},
+    {flag:'🇪🇸',name:'스페인'},{flag:'🇳🇱',name:'네덜란드'},{flag:'🇦🇹',name:'오스트리아'},
+    {flag:'🇵🇱',name:'폴란드'},{flag:'🇭🇺',name:'헝가리'},{flag:'🇨🇿',name:'체코'},
+    {flag:'🇸🇮',name:'슬로베니아'},{flag:'🇨🇭',name:'스위스'},{flag:'🇷🇺',name:'러시아'},
+    {flag:'🇰🇿',name:'카자흐스탄'},{flag:'🇺🇿',name:'우즈베키스탄'},{flag:'🇹🇼',name:'대만'},
+    {flag:'🇸🇬',name:'싱가포르'},{flag:'🇻🇳',name:'베트남'},{flag:'🇹🇭',name:'태국'},
+    {flag:'🇲🇾',name:'말레이시아'}
+  ];
+  const track=document.getElementById('countries-track');
+  if(!track)return;
+  // 두 번 복사해서 끊김 없는 루프
+  const html=countries.map(c=>`<div class="country-chip"><span class="flag">${c.flag}</span>${c.name}</div>`).join('');
+  track.innerHTML=html+html;
+})();
 
 window.addEventListener('scroll',()=>{
   document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>30);
