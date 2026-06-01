@@ -1,4 +1,6 @@
-const admin = require('firebase-admin');
+// Firebase custom token = RS256 JWT
+// firebase-admin 없이 jsonwebtoken으로 직접 생성
+const jwt = require('jsonwebtoken');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -6,34 +8,19 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   // ① 환경변수 체크
-  const { FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } = process.env;
-  if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
+  const { FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } = process.env;
+  if (!FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
     return res.status(500).json({
       error: '환경변수 누락',
-      missing: {
-        FIREBASE_PROJECT_ID:  !FIREBASE_PROJECT_ID,
-        FIREBASE_CLIENT_EMAIL: !FIREBASE_CLIENT_EMAIL,
-        FIREBASE_PRIVATE_KEY: !FIREBASE_PRIVATE_KEY,
-      }
+      missing: { FIREBASE_CLIENT_EMAIL: !FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY: !FIREBASE_PRIVATE_KEY }
     });
   }
 
-  // ② Firebase Admin 초기화 (매 요청마다 체크)
-  if (!admin.apps.length) {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId:   FIREBASE_PROJECT_ID,
-        clientEmail: FIREBASE_CLIENT_EMAIL,
-        privateKey:  FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      }),
-    });
-  }
-
-  // ③ Naver 토큰 확인
+  // ② Naver 토큰 확인
   const { token } = req.query;
   if (!token) return res.status(400).json({ error: 'access_token 없음' });
 
-  // ④ Naver 사용자 정보 조회
+  // ③ Naver 사용자 정보 조회
   let naverUser;
   try {
     const naverRes = await fetch('https://openapi.naver.com/v1/nid/me', {
@@ -46,25 +33,35 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Naver 인증 실패: ' + e.message });
   }
 
-  // ⑤ Firebase custom token 발급
+  // ④ Firebase custom token 생성 (RS256 JWT)
+  // Firebase가 기대하는 형식: https://firebase.google.com/docs/auth/admin/create-custom-tokens
   try {
-    const uid = `naver:${naverUser.id}`;
-    const customToken = await admin.auth().createCustomToken(uid, {
-      provider: 'naver',
-      name:     naverUser.name || '',
-      email:    naverUser.email || '',
-      photoURL: naverUser.profile_image || '',
-    });
+    const uid          = `naver:${naverUser.id}`;
+    const now          = Math.floor(Date.now() / 1000);
+    const privateKey   = FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+
+    const payload = {
+      iss:    FIREBASE_CLIENT_EMAIL,
+      sub:    FIREBASE_CLIENT_EMAIL,
+      aud:    'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit',
+      iat:    now,
+      exp:    now + 3600,
+      uid,
+      claims: { provider: 'naver', name: naverUser.name || '', email: naverUser.email || '' },
+    };
+
+    const customToken = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+
     return res.json({
       customToken,
       user: {
         uid,
-        name:     naverUser.name || '',
-        email:    naverUser.email || '',
+        name:     naverUser.name     || '',
+        email:    naverUser.email    || '',
         photoURL: naverUser.profile_image || '',
       },
     });
   } catch (e) {
-    return res.status(500).json({ error: 'Firebase 토큰 생성 실패: ' + e.message });
+    return res.status(500).json({ error: 'JWT 생성 실패: ' + e.message });
   }
 };
