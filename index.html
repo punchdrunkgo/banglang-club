@@ -493,7 +493,15 @@ function listenMessages(roomId) {
       badge.className     = 'chat-badge' + (hasAdminMsg ? '' : ' waiting');
     }
 
-    box.innerHTML = snap.docs.map(d => {
+    // 첫 웰컴 메시지 (대화형)
+    const welcome = `<div class="msg-wrap theirs">
+      <div class="msg-row">
+        <div class="msg-avatar-img" style="background:#1d1d1f;font-size:14px">🧭</div>
+        <div class="bubble">안녕하세요! 방랑클럽입니다 😊<br>어떤 여행 고민이든 편하게 말씀해주세요.<br>최대한 빠르게 답변 드릴게요.</div>
+      </div>
+    </div>`;
+
+    const msgs = snap.docs.map(d => {
       const m   = d.data();
       const mine = m.senderId === currentUser.uid;
       const side = mine ? 'mine' : 'theirs';
@@ -502,15 +510,17 @@ function listenMessages(roomId) {
         ? (currentUser.photoURL
             ? `<img class="msg-avatar-img" src="${currentUser.photoURL}" alt="">`
             : `<div class="msg-avatar-img">${(currentUser.displayName||'U')[0]}</div>`)
-        : `<div class="msg-avatar-img" style="background:#1d1d1f">🧭</div>`;
+        : `<div class="msg-avatar-img" style="background:#1d1d1f;font-size:14px">🧭</div>`;
       return `<div class="msg-wrap ${side}">
         <div class="msg-row">
           ${avatarHtml}
-          <div class="bubble">${escHtml(m.text)}</div>
+          <div class="bubble">${escHtml(m.text).replace(/\n/g,'<br>')}</div>
         </div>
         <div class="msg-time">${time}</div>
       </div>`;
     }).join('');
+
+    box.innerHTML = welcome + msgs;
 
     box.scrollTop = box.scrollHeight;
   });
